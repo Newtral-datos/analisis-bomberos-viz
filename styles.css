@@ -1,0 +1,327 @@
+/* ════════════════════════════════════════════════════════════════════════
+   Sistema visual — mismo papel de "cartilla" que el resto de piezas del
+   tema (ver 02_histograma.html: acento #01F3B3, tinta oscura sobre
+   superficies neutras, cifras en mono tabular) y mismo armazón técnico que
+   '/Análisis distancia bancos/mapa' (pmtiles + maplibre + servidor Range).
+   ════════════════════════════════════════════════════════════════════════ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+  --paper:      #FFFFFF;
+  --paper-2:    #FFFFFF;
+  --paper-3:    #D8D8D8;
+
+  --ink:        #1F2D2A;
+  --ink-soft:   #6b7a75;
+  --rule:       #D4D4D4;
+
+  --accent:     #01F3B3;
+
+  --font-display: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-body:    'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-mono:    'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+
+  --radius: 3px;
+  --shadow-hard: 3px 3px 0 rgba(31,45,42,0.16);
+  --shadow-lift: 4px 4px 0 rgba(31,45,42,0.22);
+
+  /* Alto real de la cabecera, medido en JS (ResizeObserver, ver medirLayout()
+     en app.js) — lo que se posiciona "debajo de la cabecera" usa esta
+     variable con calc() en vez de un top en px fijo a mano. */
+  --header-h: 54px;
+}
+
+html, body {
+  margin: 0; padding: 0; height: 100%;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  scrollbar-width: none;
+}
+html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
+
+::selection { background: var(--accent); color: var(--ink); }
+
+/* ── Mapa ── */
+#map {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+}
+
+/* ── Header ── */
+#header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: calc(12px + env(safe-area-inset-top, 0px)) calc(22px + env(safe-area-inset-right, 0px)) 12px calc(22px + env(safe-area-inset-left, 0px));
+  background: rgba(255,255,255,0.94);
+  backdrop-filter: blur(8px);
+  border-bottom: 2px solid var(--rule);
+}
+.header-marca {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  line-height: 1;
+}
+.header-eyebrow {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.header-title {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: 0.005em;
+}
+
+/* ── Columna de controles ── */
+.controls-left {
+  position: fixed;
+  top: calc(var(--header-h) + 12px);
+  left: calc(16px + env(safe-area-inset-left, 0px));
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.ctrl-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--paper-2);
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  border-radius: var(--radius);
+  padding: 9px 15px;
+  font-size: 11.5px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  box-shadow: var(--shadow-hard);
+  transition: background 0.15s, color 0.15s, transform 0.12s, box-shadow 0.12s;
+  white-space: nowrap;
+}
+.ctrl-btn:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  transform: translate(-1px, -1px);
+  box-shadow: var(--shadow-lift);
+}
+.ctrl-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+#reset-btn {
+  font-family: var(--font-display);
+  font-size: 16px;
+  padding: 8px 13px;
+  text-transform: none;
+}
+
+/* ── Leyenda flotante ── */
+.leyenda-panel {
+  position: fixed;
+  bottom: 24px;
+  left: 16px;
+  z-index: 20;
+  background: var(--paper-2);
+  border: 1px solid var(--ink);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-hard);
+  padding: 13px 15px;
+  min-width: 216px;
+}
+.lp-titulo {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-soft);
+  margin-bottom: 9px;
+}
+.lp-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.lp-sep {
+  height: 1px;
+  background: var(--rule);
+  margin: 10px 0;
+}
+.lp-step {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 11.5px;
+  color: var(--ink);
+}
+.lp-dot {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 1px rgba(31,45,42,0.25);
+}
+
+/* ── Popup ── */
+.maplibregl-popup { font: 13px/1.4 var(--font-body); }
+.maplibregl-popup-content {
+  padding: 0;
+  border-radius: 3px;
+  overflow: hidden;
+  background: var(--paper-2);
+  border: 1px solid var(--ink);
+  box-shadow: 6px 6px 0 rgba(31,45,42,0.18);
+  width: min(262px, calc(100vw - 24px));
+}
+.maplibregl-popup-tip { display: none; }
+.maplibregl-popup-close-button {
+  top: 9px; right: 10px;
+  width: 22px; height: 22px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; line-height: 1;
+  font-family: var(--font-body);
+  color: var(--ink-soft);
+  background: transparent;
+  border: 1px solid var(--rule);
+  border-radius: 50%;
+  padding: 0;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.maplibregl-popup-close-button:hover {
+  background: var(--ink);
+  color: var(--paper-2);
+  border-color: var(--ink);
+}
+
+.pp-bar { height: 5px; }
+.pp-inner {
+  padding: 16px 18px 17px;
+  display: flex;
+  flex-direction: column;
+}
+.pp-badge {
+  align-self: flex-start;
+  font-family: var(--font-body);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  padding: 4px 10px;
+  border-radius: 2px;
+  margin-bottom: 11px;
+}
+.pp-nombre {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.25;
+}
+.pp-tipo {
+  margin: 4px 0 0;
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+.pp-sep {
+  height: 1px;
+  background: var(--rule);
+  margin: 13px 0;
+}
+.pp-filas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 16px;
+}
+.pp-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.pp-stat--ancha { grid-column: 1 / -1; }
+.pp-stat-k {
+  font-family: var(--font-body);
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+}
+.pp-stat-v {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: break-word;
+}
+
+/* ── MapLibre overrides ── */
+.maplibregl-ctrl-top-right {
+  top: calc(var(--header-h) + 12px) !important;
+}
+.maplibregl-ctrl-group {
+  background: var(--paper-2) !important;
+  border: 1px solid var(--ink) !important;
+  border-radius: var(--radius) !important;
+  overflow: hidden;
+  box-shadow: var(--shadow-hard) !important;
+}
+.maplibregl-ctrl-group button + button { border-top: 1px solid var(--rule) !important; }
+
+.maplibregl-ctrl-scale {
+  font-family: var(--font-mono) !important;
+  font-size: 10px !important;
+  color: var(--ink) !important;
+  background: rgba(255,255,255,0.85) !important;
+  border-color: var(--ink) !important;
+  padding: 0 4px !important;
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  #header { padding-top: calc(9px + env(safe-area-inset-top, 0px)); padding-bottom: 9px; gap: 8px; }
+  .header-title { font-size: 13px; }
+  .header-eyebrow { font-size: 8.5px; }
+
+  .ctrl-btn { padding: 8px 13px; font-size: 10.5px; min-height: 44px; }
+
+  .maplibregl-ctrl-top-right .maplibregl-ctrl { margin-top: 0 !important; }
+  .maplibregl-popup-close-button { width: 30px; height: 30px; font-size: 18px; }
+
+  .leyenda-panel {
+    left: calc(8px + env(safe-area-inset-left, 0px));
+    min-width: 0;
+    width: 176px;
+    padding: 9px 11px;
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  }
+  .lp-titulo { font-size: 9px; margin-bottom: 7px; }
+}
+
+/* ── Movimiento reducido ── */
+@media (prefers-reduced-motion: reduce) {
+  .ctrl-btn { transition: none; }
+  .ctrl-btn:hover { transform: none; }
+}

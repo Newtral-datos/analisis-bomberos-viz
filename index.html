@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Tiempo de llegada de los bomberos en España</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+  <!--
+    Servidor local (necesita soportar peticiones Range para el .pmtiles,
+    python3 -m http.server no lo hace):
+      cd mapa
+      python3 servir.py
+    http://localhost:8000
+  -->
+
+  <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+  <script src="https://unpkg.com/pmtiles@3.0.6/dist/pmtiles.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <div id="map"></div>
+
+  <header id="header">
+    <div class="header-marca">
+      <span class="header-eyebrow">Benchmark nacional</span>
+      <span class="header-title">Tiempo de llegada de los bomberos</span>
+    </div>
+  </header>
+
+  <!-- Columna de controles — un único contenedor flex fijo en vez de un top en px por
+       botón, para que la pila nunca se solape aunque la cabecera cambie de alto. -->
+  <div id="controls-left" class="controls-left">
+    <button id="reset-btn" class="ctrl-btn" title="Centrar mapa">&#8635;</button>
+    <button id="parques-btn" class="ctrl-btn" title="Mostrar u ocultar los parques de bomberos">Ocultar parques</button>
+  </div>
+
+  <div id="leyenda-panel" class="leyenda-panel"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
