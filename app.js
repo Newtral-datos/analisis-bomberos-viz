@@ -36,14 +36,15 @@ const PARQUE_COLOR = '#D7263D'; // rojo de parque de bomberos — deliberadament
                                  // familia de verdes de la rampa de tiempo, para no confundir
                                  // identidad (un parque) con magnitud (un tiempo de llegada).
 
-/* Cortes en minutos cerrados (más legibles que los cuantiles exactos de
-   qgis/style-benchmarks-bomberos.qml) con la misma rampa ColorBrewer "Greens". */
+/* Cortes en minutos cerrados, rampa de un solo tono (mismo H≈165° OKLCH que el acento
+   de marca) con la clase central (6-10 min) fijada exactamente en el acento #01F3B3 —
+   dos pasos más claros hacia el verde casi blanco, dos más oscuros hacia un verde bosque. */
 const TIEMPO_CLASES = [
-  { max: 3,        color: '#F7FCF5', label: '0 – 3 min' },
-  { max: 6,        color: '#C9EAC2', label: '3 – 6 min' },
-  { max: 10,       color: '#7BC77C', label: '6 – 10 min' },
-  { max: 20,       color: '#2A924B', label: '10 – 20 min' },
-  { max: Infinity, color: '#00441B', label: '+20 min' },
+  { max: 3,        color: '#F7FEFA', label: '0 – 3 min' },
+  { max: 6,        color: '#9EFBD4', label: '3 – 6 min' },
+  { max: 10,       color: '#01F3B3', label: '6 – 10 min' },
+  { max: 20,       color: '#00A276', label: '10 – 20 min' },
+  { max: Infinity, color: '#18543E', label: '+20 min' },
 ];
 const TIEMPO_SIN_DATO = '#BEC6C4';
 const PUNTO_OUTLINE = '#232323'; // outline_color del QML (35,35,35)
@@ -76,6 +77,29 @@ function formatearKm(v) {
 }
 function nombreProvincia(slug) {
   return slug.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+
+// Mismo criterio que EXPR_COLOR_TIEMPO (paso a paso, acumulando el ultimo umbral
+// superado) pero evaluado en JS para poder colorear el popup del edificio igual que
+// su punto en el mapa, en vez de usar siempre el rojo de "parque".
+function colorParaTiempo(tiempoMin) {
+  if (tiempoMin === undefined || tiempoMin === null) return TIEMPO_SIN_DATO;
+  let color = TIEMPO_CLASES[0].color;
+  for (let i = 1; i < TIEMPO_CLASES.length; i++) {
+    if (tiempoMin >= TIEMPO_CLASES[i - 1].max) color = TIEMPO_CLASES[i].color;
+    else break;
+  }
+  return color;
+}
+
+// Texto blanco sobre colores oscuros, texto oscuro sobre colores claros (las primeras
+// clases de la rampa "Greens" son casi blancas, así que el texto blanco fijo quedaba ilegible).
+function colorTextoLegible(hex) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  const luminancia = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return luminancia > 0.6 ? '#1F2D2A' : '#FFFFFF';
 }
 
 const map = new maplibregl.Map({
@@ -114,6 +138,99 @@ const parquesBtnEl = document.getElementById('parques-btn');
 parquesBtnEl.addEventListener('click', () => {
   mostrarParques = !mostrarParques;
   actualizarCapaParques();
+});
+
+/* ── Geocoder (Nominatim/OSM) ──
+   Sin API key: Nominatim es de uso libre con límite de ~1 req/s y pide identificar la
+   app (aquí basta el Referer que el propio navegador ya manda) — el debounce de 400ms
+   ya evita disparar una petición por cada pulsación de tecla. */
+const GEOCODER_DEBOUNCE_MS = 400;
+const GEOCODER_MIN_CHARS = 3;
+const geocoderInputEl = document.getElementById('geocoder-input');
+const geocoderResultadosEl = document.getElementById('geocoder-resultados');
+
+let geocoderTimer = null;
+let geocoderAbort = null;
+let geocoderResultados = [];
+let geocoderActivo = -1;
+
+function cerrarGeocoderResultados() {
+  geocoderResultadosEl.classList.remove('is-open');
+  geocoderResultadosEl.innerHTML = '';
+  geocoderResultados = [];
+  geocoderActivo = -1;
+}
+
+function renderGeocoderResultados() {
+  if (geocoderResultados.length === 0) {
+    geocoderResultadosEl.innerHTML = '<div class="geocoder-item geocoder-item--vacio">Sin resultados</div>';
+  } else {
+    geocoderResultadosEl.innerHTML = geocoderResultados.map((r, i) => `
+      <button type="button" class="geocoder-item${i === geocoderActivo ? ' is-activo' : ''}" data-indice="${i}">
+        ${r.display_name}
+      </button>`).join('');
+  }
+  geocoderResultadosEl.classList.add('is-open');
+}
+
+function irAResultadoGeocoder(resultado) {
+  map.flyTo({ center: [Number(resultado.lon), Number(resultado.lat)], zoom: 14, duration: 1200 });
+  geocoderInputEl.value = resultado.display_name;
+  cerrarGeocoderResultados();
+}
+
+async function buscarGeocoder(consulta) {
+  if (geocoderAbort) geocoderAbort.abort();
+  geocoderAbort = new AbortController();
+
+  const url = `https://nominatim.openstreetmap.org/search?format=json&countrycodes=es&limit=6&accept-language=es&q=${encodeURIComponent(consulta)}`;
+  try {
+    const respuesta = await fetch(url, { signal: geocoderAbort.signal });
+    geocoderResultados = await respuesta.json();
+  } catch (err) {
+    if (err.name === 'AbortError') return;
+    console.error('Error buscando dirección:', err);
+    geocoderResultadosEl.innerHTML = '<div class="geocoder-item geocoder-item--error">Error al buscar</div>';
+    geocoderResultadosEl.classList.add('is-open');
+    return;
+  }
+  geocoderActivo = -1;
+  renderGeocoderResultados();
+}
+
+geocoderInputEl.addEventListener('input', () => {
+  clearTimeout(geocoderTimer);
+  const consulta = geocoderInputEl.value.trim();
+  if (consulta.length < GEOCODER_MIN_CHARS) { cerrarGeocoderResultados(); return; }
+  geocoderTimer = setTimeout(() => buscarGeocoder(consulta), GEOCODER_DEBOUNCE_MS);
+});
+
+geocoderResultadosEl.addEventListener('click', e => {
+  const boton = e.target.closest('.geocoder-item[data-indice]');
+  if (!boton) return;
+  irAResultadoGeocoder(geocoderResultados[Number(boton.dataset.indice)]);
+});
+
+geocoderInputEl.addEventListener('keydown', e => {
+  if (!geocoderResultadosEl.classList.contains('is-open') || geocoderResultados.length === 0) return;
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    geocoderActivo = (geocoderActivo + 1) % geocoderResultados.length;
+    renderGeocoderResultados();
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    geocoderActivo = (geocoderActivo - 1 + geocoderResultados.length) % geocoderResultados.length;
+    renderGeocoderResultados();
+  } else if (e.key === 'Enter' && geocoderActivo >= 0) {
+    e.preventDefault();
+    irAResultadoGeocoder(geocoderResultados[geocoderActivo]);
+  } else if (e.key === 'Escape') {
+    cerrarGeocoderResultados();
+  }
+});
+
+document.addEventListener('click', e => {
+  if (!document.getElementById('geocoder').contains(e.target)) cerrarGeocoderResultados();
 });
 function actualizarCapaParques() {
   if (!map.getLayer('parques-circle')) return;
@@ -210,6 +327,8 @@ map.on('load', async () => { try {
   map.on('mouseleave', 'parques-circle', () => { map.getCanvas().style.cursor = ''; });
 
   function mostrarPopupEdificio(p, lngLat, slug) {
+    const colorPunto = colorParaTiempo(p.tiempo_min);
+    const colorTexto = colorTextoLegible(colorPunto);
     const filas = [
       { label: 'Tiempo estimado de llegada', valor: formatearMinutos(p.tiempo_min) },
       { label: 'Distancia por carretera', valor: formatearKm(p.distancia_km) },
@@ -219,9 +338,9 @@ map.on('load', async () => { try {
 
     const html = `
       <div>
-        <div class="pp-bar" style="background:${PARQUE_COLOR}"></div>
+        <div class="pp-bar" style="background:${colorPunto}"></div>
         <div class="pp-inner">
-          <span class="pp-badge" style="background:${PARQUE_COLOR};color:#FFFFFF">Edificio</span>
+          <span class="pp-badge" style="background:${colorPunto};color:${colorTexto}">Edificio</span>
           <div class="pp-filas">${filas.map(f => `
             <div class="pp-stat${f.ancha ? ' pp-stat--ancha' : ''}">
               <span class="pp-stat-k">${f.label}</span>

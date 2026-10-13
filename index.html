@@ -42,6 +42,21 @@
     <button id="parques-btn" class="ctrl-btn" title="Mostrar u ocultar los parques de bomberos">Ocultar parques</button>
   </div>
 
+  <!-- Flotante sobre el mapa, esquina superior derecha — encima de los botones de
+       zoom de MapLibre (ver .maplibregl-ctrl-top-right en styles.css, que reserva
+       el hueco necesario debajo con su propio `top`). -->
+  <div class="geocoder" id="geocoder">
+    <input
+      id="geocoder-input"
+      class="geocoder-input"
+      type="text"
+      inputmode="search"
+      autocomplete="off"
+      placeholder="Buscar dirección…"
+    />
+    <div id="geocoder-resultados" class="geocoder-resultados"></div>
+  </div>
+
   <div id="leyenda-panel" class="leyenda-panel"></div>
 
   <script src="app.js"></script>
