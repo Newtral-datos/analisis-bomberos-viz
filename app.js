@@ -11,8 +11,11 @@
 const PMTILES_DIR = 'pmtiles';
 const PMTILES_MANIFEST = `${PMTILES_DIR}/manifest.json`;
 const PARQUES_FILE = 'parque_bomberos.geojson';
+// Límites de provincia (geoBoundaries ADM2), convertido desde
+// /Users/miguel.ros/Desktop/Recursos/spain-provincias.geojson con tippecanoe + pmtiles.
+const PROVINCIAS_PMTILES_FILE = 'provincias.pmtiles';
 
-const CENTRO_INICIAL = { center: [-3.7, 40.0], zoom: 5.4 };
+const CENTRO_INICIAL = { center: [-3.7, 37.5], zoom: 4.2 };
 
 // Una capa (source-layer) por provincia dentro del mismo .pmtiles unificado — ver
 // 07_geojson_a_pmtiles.py, que usa el nombre de cada geojson de origen como nombre de capa
@@ -145,6 +148,20 @@ map.on('load', async () => { try {
       'raster-brightness-min': 0.42,
       'raster-brightness-max': 0.96,
       'raster-contrast': -0.05,
+    },
+  });
+
+  // Límites de provincia (geoBoundaries ADM2) — solo el contorno, sin relleno, como
+  // referencia geográfica por debajo de los puntos de edificios/parques.
+  map.addSource('provincias', { type: 'vector', url: `pmtiles://${PROVINCIAS_PMTILES_FILE}` });
+  map.addLayer({
+    id: 'provincias-borde',
+    type: 'line',
+    source: 'provincias',
+    'source-layer': 'provincias',
+    paint: {
+      'line-color': '#494949',
+      'line-width': ['interpolate', ['linear'], ['zoom'], 4, 0.5, 8, 1, 12, 1.5],
     },
   });
 

@@ -144,7 +144,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
 /* ── Leyenda flotante ── */
 .leyenda-panel {
   position: fixed;
-  bottom: 24px;
+  bottom: 64px;
   left: 16px;
   z-index: 20;
   background: var(--paper-2);
@@ -323,7 +323,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
     min-width: 0;
     width: 176px;
     padding: 17px 11px 9px;
-    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    bottom: calc(48px + env(safe-area-inset-bottom, 0px));
   }
   .lp-titulo { font-size: 9px; margin-bottom: 7px; }
 }
