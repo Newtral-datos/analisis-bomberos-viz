@@ -33,17 +33,14 @@ const PARQUE_COLOR = '#D7263D'; // rojo de parque de bomberos — deliberadament
                                  // familia de verdes de la rampa de tiempo, para no confundir
                                  // identidad (un parque) con magnitud (un tiempo de llegada).
 
-/* Clasificación por cuantiles (5 clases) y rampa ColorBrewer "Greens", tal cual
-   qgis/style-benchmarks-bomberos.qml (renderer-v2 graduatedMethod="GraduatedColor",
-   classificationMethod id="Quantile", attr="tiempo_min") — mismos cortes y mismos colores
-   que en QGIS, para que el mapa web lea igual que la vista de control del análisis en vez
-   de inventar una rampa propia. */
+/* Cortes en minutos cerrados (más legibles que los cuantiles exactos de
+   qgis/style-benchmarks-bomberos.qml) con la misma rampa ColorBrewer "Greens". */
 const TIEMPO_CLASES = [
-  { max: 4.303,    color: '#F7FCF5', label: '0 – 4,3 min' },
-  { max: 10.269,   color: '#C9EAC2', label: '4,3 – 10,3 min' },
-  { max: 16.472,   color: '#7BC77C', label: '10,3 – 16,5 min' },
-  { max: 25.584,   color: '#2A924B', label: '16,5 – 25,6 min' },
-  { max: Infinity, color: '#00441B', label: '25,6 – 59,9 min' },
+  { max: 3,        color: '#F7FCF5', label: '0 – 3 min' },
+  { max: 6,        color: '#C9EAC2', label: '3 – 6 min' },
+  { max: 10,       color: '#7BC77C', label: '6 – 10 min' },
+  { max: 20,       color: '#2A924B', label: '10 – 20 min' },
+  { max: Infinity, color: '#00441B', label: '+20 min' },
 ];
 const TIEMPO_SIN_DATO = '#BEC6C4';
 const PUNTO_OUTLINE = '#232323'; // outline_color del QML (35,35,35)
@@ -89,7 +86,7 @@ const map = new maplibregl.Map({
 });
 
 let popup = null;
-let mostrarParques = true;
+let mostrarParques = false;
 
 /* ── Leyenda ──
    Las 5 clases + etiquetas vienen de TIEMPO_CLASES (mismos cortes por cuantiles que
@@ -222,7 +219,6 @@ map.on('load', async () => { try {
 
   function mostrarPopupParque(p, lngLat) {
     const locLine = [p.ciudad, p.provincia].filter(Boolean).join(', ');
-    const valoracion = p.rating ? `${Number(p.rating).toLocaleString('es-ES')} (${p.num_valoraciones || 0})` : null;
 
     const html = `
       <div>
@@ -231,11 +227,10 @@ map.on('load', async () => { try {
           <span class="pp-badge" style="background:${PARQUE_COLOR};color:#FFFFFF">Parque de bomberos</span>
           <p class="pp-nombre">${p.nombre || '—'}</p>
           ${p.direccion ? `<p class="pp-tipo">${p.direccion}</p>` : ''}
-          ${locLine || valoracion ? `
+          ${locLine ? `
             <div class="pp-sep"></div>
             <div class="pp-filas">
-              ${locLine ? `<div class="pp-stat pp-stat--ancha"><span class="pp-stat-k">Localización</span><span class="pp-stat-v">${locLine}</span></div>` : ''}
-              ${valoracion ? `<div class="pp-stat"><span class="pp-stat-k">Valoración Google</span><span class="pp-stat-v">${valoracion}</span></div>` : ''}
+              <div class="pp-stat pp-stat--ancha"><span class="pp-stat-k">Localización</span><span class="pp-stat-v">${locLine}</span></div>
             </div>` : ''}
         </div>
       </div>`;

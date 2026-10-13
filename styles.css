@@ -85,6 +85,13 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
   color: var(--ink);
   letter-spacing: 0.005em;
 }
+.header-logo {
+  margin-left: auto;
+  height: 22px;
+  width: auto;
+  display: block;
+  flex-shrink: 0;
+}
 
 /* ── Columna de controles ── */
 .controls-left {
@@ -144,7 +151,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
   border: 1px solid var(--ink);
   border-radius: var(--radius);
   box-shadow: var(--shadow-hard);
-  padding: 13px 15px;
+  padding: 22px 15px 13px;
   min-width: 216px;
 }
 .lp-titulo {
@@ -304,6 +311,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
   #header { padding-top: calc(9px + env(safe-area-inset-top, 0px)); padding-bottom: 9px; gap: 8px; }
   .header-title { font-size: 13px; }
   .header-eyebrow { font-size: 8.5px; }
+  .header-logo { height: 16px; }
 
   .ctrl-btn { padding: 8px 13px; font-size: 10.5px; min-height: 44px; }
 
@@ -314,7 +322,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
     left: calc(8px + env(safe-area-inset-left, 0px));
     min-width: 0;
     width: 176px;
-    padding: 9px 11px;
+    padding: 17px 11px 9px;
     bottom: calc(16px + env(safe-area-inset-bottom, 0px));
   }
   .lp-titulo { font-size: 9px; margin-bottom: 7px; }
