@@ -130,9 +130,10 @@ function renderLeyenda() {
     <div class="lp-step"><span class="lp-dot" style="background:${PARQUE_COLOR};box-shadow:0 0 0 1.5px #494949"></span>Parque de bomberos</div>`;
 }
 
-document.getElementById('reset-btn').addEventListener('click', () =>
-  map.flyTo({ center: CENTRO_INICIAL.center, zoom: CENTRO_INICIAL.zoom, duration: 1000 })
-);
+document.getElementById('reset-btn').addEventListener('click', () => {
+  map.flyTo({ center: CENTRO_INICIAL.center, zoom: CENTRO_INICIAL.zoom, duration: 1000 });
+  limpiarResaltadoGeocoder();
+});
 
 const parquesBtnEl = document.getElementById('parques-btn');
 parquesBtnEl.addEventListener('click', () => {
@@ -153,6 +154,44 @@ let geocoderTimer = null;
 let geocoderAbort = null;
 let geocoderResultados = [];
 let geocoderActivo = -1;
+let geocoderPulsoId = null;
+
+// Fuente geojson vacía hasta la primera búsqueda; se rellena/vacía con setData en vez de
+// añadir/quitar capas, para no tener que esperar a un 'load' adicional en cada búsqueda.
+function resaltarEnMapa(lon, lat) {
+  if (geocoderPulsoId) cancelAnimationFrame(geocoderPulsoId);
+  map.getSource('geocoder-resaltado').setData({
+    type: 'FeatureCollection',
+    features: [{ type: 'Feature', geometry: { type: 'Point', coordinates: [lon, lat] }, properties: {} }],
+  });
+
+  // Un par de pulsos del halo para que el ojo encuentre el punto nada más llegar; el punto
+  // central (geocoder-resaltado-punto) se queda fijo como referencia permanente.
+  const inicio = performance.now();
+  const DURACION_PULSO = 900;
+  const NUM_PULSOS = 2;
+  function pulso(ahora) {
+    const transcurrido = ahora - inicio;
+    const progreso = (transcurrido % DURACION_PULSO) / DURACION_PULSO;
+    map.setPaintProperty('geocoder-resaltado-halo', 'circle-radius', 8 + progreso * 32);
+    map.setPaintProperty('geocoder-resaltado-halo', 'circle-opacity', 0.35 * (1 - progreso));
+    map.setPaintProperty('geocoder-resaltado-halo', 'circle-stroke-opacity', 0.8 * (1 - progreso));
+    if (transcurrido < DURACION_PULSO * NUM_PULSOS) {
+      geocoderPulsoId = requestAnimationFrame(pulso);
+    } else {
+      geocoderPulsoId = null;
+      map.setPaintProperty('geocoder-resaltado-halo', 'circle-opacity', 0);
+      map.setPaintProperty('geocoder-resaltado-halo', 'circle-stroke-opacity', 0);
+    }
+  }
+  geocoderPulsoId = requestAnimationFrame(pulso);
+}
+
+function limpiarResaltadoGeocoder() {
+  if (geocoderPulsoId) { cancelAnimationFrame(geocoderPulsoId); geocoderPulsoId = null; }
+  const fuente = map.getSource('geocoder-resaltado');
+  if (fuente) fuente.setData({ type: 'FeatureCollection', features: [] });
+}
 
 function cerrarGeocoderResultados() {
   geocoderResultadosEl.classList.remove('is-open');
@@ -174,7 +213,10 @@ function renderGeocoderResultados() {
 }
 
 function irAResultadoGeocoder(resultado) {
-  map.flyTo({ center: [Number(resultado.lon), Number(resultado.lat)], zoom: 14, duration: 1200 });
+  const lon = Number(resultado.lon);
+  const lat = Number(resultado.lat);
+  map.flyTo({ center: [lon, lat], zoom: 17, duration: 1200 });
+  resaltarEnMapa(lon, lat);
   geocoderInputEl.value = resultado.display_name;
   cerrarGeocoderResultados();
 }
@@ -314,6 +356,34 @@ map.on('load', async () => { try {
       'circle-stroke-width':   1.5,
       'circle-stroke-color':   '#494949',
       'circle-opacity':        0.95,
+    },
+  });
+
+  // Resaltado del resultado del geocoder: halo que pulsa un par de veces al llegar
+  // (resaltarEnMapa) + punto fijo que queda como referencia de "aquí buscaste".
+  map.addSource('geocoder-resaltado', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
+  map.addLayer({
+    id: 'geocoder-resaltado-halo',
+    type: 'circle',
+    source: 'geocoder-resaltado',
+    paint: {
+      'circle-radius': 8,
+      'circle-color': '#01F3B3',
+      'circle-opacity': 0,
+      'circle-stroke-width': 2,
+      'circle-stroke-color': '#01F3B3',
+      'circle-stroke-opacity': 0,
+    },
+  });
+  map.addLayer({
+    id: 'geocoder-resaltado-punto',
+    type: 'circle',
+    source: 'geocoder-resaltado',
+    paint: {
+      'circle-radius': 7,
+      'circle-color': '#01F3B3',
+      'circle-stroke-width': 2,
+      'circle-stroke-color': '#1F2D2A',
     },
   });
 
