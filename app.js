@@ -235,7 +235,7 @@ document.addEventListener('click', e => {
 function actualizarCapaParques() {
   if (!map.getLayer('parques-circle')) return;
   map.setLayoutProperty('parques-circle', 'visibility', mostrarParques ? 'visible' : 'none');
-  parquesBtnEl.textContent = mostrarParques ? 'Ocultar parques' : 'Mostrar parques';
+  parquesBtnEl.textContent = mostrarParques ? 'Ocultar puntos de bomberos' : 'Mostrar puntos de bomberos';
   parquesBtnEl.classList.toggle('active', mostrarParques);
 }
 
