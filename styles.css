@@ -106,7 +106,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
 }
 .geocoder-input {
   width: 100%;
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 12.5px;
   color: var(--ink);
   background: var(--paper-2);
@@ -162,7 +162,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
 .geocoder-item--error {
   color: var(--ink-soft);
   cursor: default;
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-size: 10.5px;
@@ -399,6 +399,12 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
     max-width: none;
   }
   .geocoder-input { font-size: 16px; } /* >=16px evita el autozoom de iOS Safari al enfocar */
+
+  /* En movil el geocoder pasa a ocupar todo el ancho (arriba) y tapa la columna de
+     controles de la izquierda, que en desktop vive en la misma fila sin solaparse.
+     Se baja la columna debajo del geocoder con el mismo alto reservado que usa
+     .maplibregl-ctrl-top-right para el mismo input. */
+  .controls-left { top: calc(var(--header-h) + 12px + 40px + 12px); }
 
   .ctrl-btn { padding: 8px 13px; font-size: 10.5px; min-height: 44px; }
 

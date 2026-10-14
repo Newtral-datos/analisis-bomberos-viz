@@ -260,8 +260,7 @@ map.on('load', async () => { try {
     type: 'raster',
     source: 'basemap',
     paint: {
-      'raster-saturation': -0.75,
-      'raster-hue-rotate': 22,
+      'raster-saturation': -1,
       'raster-brightness-min': 0.42,
       'raster-brightness-max': 0.96,
       'raster-contrast': -0.05,
