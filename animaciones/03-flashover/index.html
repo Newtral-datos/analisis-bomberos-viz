@@ -642,5 +642,23 @@
     }
   })();
 </script>
+<script>
+  (function () {
+    var pbSlug = "03-flashover";
+    function reportHeight() {
+      var h = Math.ceil(document.body.getBoundingClientRect().height);
+      window.parent.postMessage({ source: "pb-anim", slug: pbSlug, height: h }, "*");
+    }
+    if (document.readyState === "complete") {
+      reportHeight();
+    } else {
+      window.addEventListener("load", reportHeight);
+    }
+    window.addEventListener("resize", reportHeight);
+    if (window.ResizeObserver) {
+      new ResizeObserver(reportHeight).observe(document.body);
+    }
+  })();
+</script>
 </body>
 </html>
