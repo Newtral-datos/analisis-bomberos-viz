@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Parque a edificio — tiempo medio de llegada</title>
+</head>
+<body>
+<div class="pb-anim">
+  <div class="pb-anim__card">
+    <p class="pb-anim__eyebrow"><span class="pb-anim__rule"></span>Media nacional de llegada</p>
+
+    <div class="pb-anim__scenebox">
+    <svg class="pb-anim__scene" viewBox="0 0 960 360" xmlns="http://www.w3.org/2000/svg" role="img"
+         aria-label="Un camion de bomberos circula desde el parque de bomberos hasta un edificio en llamas">
+      <defs>
+        <radialGradient id="pbFireGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ff8a3d" stop-opacity="0.5" />
+          <stop offset="100%" stop-color="#ff8a3d" stop-opacity="0" />
+        </radialGradient>
+      </defs>
+      <g transform="translate(0,60)">
+
+      <!-- cielo y nubes -->
+      <g class="pb-sky-a">
+        <ellipse cx="150" cy="46" rx="26" ry="14" fill="#eef2f1" />
+        <ellipse cx="172" cy="40" rx="20" ry="12" fill="#eef2f1" />
+        <ellipse cx="128" cy="40" rx="18" ry="11" fill="#eef2f1" />
+      </g>
+      <g class="pb-sky-b">
+        <ellipse cx="700" cy="36" rx="22" ry="12" fill="#eef2f1" />
+        <ellipse cx="722" cy="42" rx="16" ry="10" fill="#eef2f1" />
+      </g>
+      <g class="pb-sky-a">
+        <ellipse cx="430" cy="28" rx="16" ry="9" fill="#f3f6f5" />
+        <ellipse cx="446" cy="32" rx="12" ry="8" fill="#f3f6f5" />
+      </g>
+
+      <!-- carretera -->
+      <rect x="0" y="225" width="960" height="23" fill="#e6e9e8" />
+      <line x1="0" y1="225" x2="960" y2="225" stroke="#ccd2d0" stroke-width="2" />
+      <line class="pb-roadline" x1="205" y1="236" x2="760" y2="236" stroke="#01f3b3" stroke-width="4"
+            stroke-linecap="round" stroke-dasharray="16 14" />
+
+      <!-- matojos -->
+      <g fill="#9ccaa8">
+        <ellipse cx="225" cy="221" rx="9" ry="7" />
+        <ellipse cx="238" cy="223" rx="7" ry="6" />
+        <ellipse cx="735" cy="222" rx="8" ry="6" />
+      </g>
+
+      <!-- parque de bomberos -->
+      <g>
+        <ellipse cx="115" cy="227" rx="80" ry="7" fill="#000000" opacity="0.07" />
+        <g fill="#8fbf9a">
+          <circle cx="28" cy="214" r="11" />
+          <circle cx="18" cy="218" r="8" />
+          <circle cx="38" cy="219" r="8" />
+        </g>
+        <rect x="38" y="104" width="154" height="20" rx="6" fill="#20302a" />
+        <rect x="38" y="120" width="154" height="4" fill="#01f3b3" opacity="0.55" />
+        <rect x="45" y="120" width="140" height="105" rx="4" fill="#f4ede2" stroke="#1f2d2a" stroke-width="3" />
+        <rect x="58" y="132" width="22" height="22" rx="3" fill="#cfe9f2" stroke="#1f2d2a" stroke-width="2" />
+        <rect x="160" y="132" width="22" height="22" rx="3" fill="#cfe9f2" stroke="#1f2d2a" stroke-width="2" />
+        <rect x="70" y="160" width="90" height="65" rx="6" fill="#1c2622" stroke="#01f3b3" stroke-width="3" />
+        <g stroke="#45554e" stroke-width="2">
+          <line x1="78" y1="172" x2="152" y2="172" />
+          <line x1="78" y1="184" x2="152" y2="184" />
+          <line x1="78" y1="196" x2="152" y2="196" />
+          <line x1="78" y1="208" x2="152" y2="208" />
+        </g>
+        <line x1="182" y1="104" x2="182" y2="56" stroke="#1f2d2a" stroke-width="3" />
+        <g class="pb-flag" style="transform-box: fill-box; transform-origin: 0% 0%;">
+          <path d="M182 56 L182 72 L207 65 Z" fill="#01f3b3" />
+        </g>
+        <line x1="115" y1="104" x2="115" y2="94" stroke="#1f2d2a" stroke-width="2.5" />
+        <circle class="pb-beacon" cx="115" cy="92" r="4" fill="#01f3b3" />
+      </g>
+
+      <!-- edificio destino, en llamas -->
+      <g>
+        <ellipse cx="850" cy="227" rx="85" ry="7" fill="#000000" opacity="0.07" />
+        <ellipse class="pb-fire-glow" cx="865" cy="62" rx="58" ry="46" fill="url(#pbFireGlow)" />
+        <rect x="773" y="46" width="154" height="18" rx="6" fill="#20302a" />
+        <line x1="850" y1="46" x2="850" y2="27" stroke="#1f2d2a" stroke-width="2.5" />
+        <circle cx="850" cy="25" r="3" fill="#1f2d2a" />
+        <rect x="780" y="60" width="140" height="165" rx="4" fill="#e9eef1" stroke="#1f2d2a" stroke-width="3" />
+
+        <g stroke="#1f2d2a" stroke-width="2">
+          <rect x="796" y="76" width="25" height="24" rx="3" fill="#ffe9a8" />
+          <rect x="838" y="76" width="25" height="24" rx="3" fill="#cfe9f2" />
+          <rect x="880" y="76" width="25" height="24" rx="3" fill="#2a1d1a" />
+
+          <rect x="796" y="110" width="25" height="24" rx="3" fill="#cfe9f2" />
+          <rect x="838" y="110" width="25" height="24" rx="3" fill="#ffe9a8" />
+          <rect x="880" y="110" width="25" height="24" rx="3" fill="#cfe9f2" />
+
+          <rect x="796" y="144" width="25" height="24" rx="3" fill="#cfe9f2" />
+          <rect x="838" y="144" width="25" height="24" rx="3" fill="#cfe9f2" />
+          <rect x="880" y="144" width="25" height="24" rx="3" fill="#ffe9a8" />
+
+          <rect x="796" y="178" width="25" height="24" rx="3" fill="#cfe9f2" />
+          <rect x="880" y="178" width="25" height="24" rx="3" fill="#cfe9f2" />
+        </g>
+        <rect class="pb-fire-window-glow" x="882" y="78" width="21" height="20" rx="2" fill="#ff8a3d" opacity="0.55" />
+
+        <rect x="792" y="134" width="33" height="6" rx="2" fill="#c7cfcd" stroke="#1f2d2a" stroke-width="1.2" />
+        <rect x="876" y="168" width="33" height="6" rx="2" fill="#c7cfcd" stroke="#1f2d2a" stroke-width="1.2" />
+
+        <rect x="835" y="203" width="30" height="22" rx="2" fill="#1c2622" stroke="#01f3b3" stroke-width="2" />
+        <rect x="828" y="196" width="44" height="8" rx="2" fill="#01f3b3" opacity="0.9" />
+
+        <!-- humo -->
+        <g fill="#c7cdcb">
+          <ellipse class="pb-smoke pb-smoke-1" cx="892" cy="34" rx="7" ry="5" />
+          <ellipse class="pb-smoke pb-smoke-2" cx="892" cy="34" rx="7" ry="5" />
+          <ellipse class="pb-smoke pb-smoke-3" cx="892" cy="34" rx="7" ry="5" />
+        </g>
+
+        <!-- llama grande en el tejado -->
+        <g transform="translate(818,46) scale(1.3)">
+          <g class="pb-fire pb-fire-a" style="transform-box: fill-box; transform-origin: 50% 100%;">
+            <path transform="translate(-10,-31)" fill="#d33b2c" d="M10 2 C14 8 16 14 13 19 C17 17 19 13 18 9 C21 14 20 21 16 25 C18 24 20 21 20 21 C20 27 15 31 10 31 C5 31 0 27 0 21 C0 21 2 24 4 25 C0 21 -1 14 2 9 C1 13 3 17 7 19 C4 14 6 8 10 2 Z" />
+            <path transform="translate(-10,-24) scale(0.68)" fill="#ff8a3d" d="M10 2 C14 8 16 14 13 19 C17 17 19 13 18 9 C21 14 20 21 16 25 C18 24 20 21 20 21 C20 27 15 31 10 31 C5 31 0 27 0 21 C0 21 2 24 4 25 C0 21 -1 14 2 9 C1 13 3 17 7 19 C4 14 6 8 10 2 Z" />
+            <path transform="translate(-10,-19) scale(0.4)" fill="#ffd166" d="M10 2 C14 8 16 14 13 19 C17 17 19 13 18 9 C21 14 20 21 16 25 C18 24 20 21 20 21 C20 27 15 31 10 31 C5 31 0 27 0 21 C0 21 2 24 4 25 C0 21 -1 14 2 9 C1 13 3 17 7 19 C4 14 6 8 10 2 Z" />
+          </g>
+        </g>
+
+        <!-- llama pequena en el tejado -->
+        <g transform="translate(896,46) scale(0.85)">
+          <g class="pb-fire pb-fire-b" style="transform-box: fill-box; transform-origin: 50% 100%;">
+            <path transform="translate(-10,-31)" fill="#d33b2c" d="M10 2 C14 8 16 14 13 19 C17 17 19 13 18 9 C21 14 20 21 16 25 C18 24 20 21 20 21 C20 27 15 31 10 31 C5 31 0 27 0 21 C0 21 2 24 4 25 C0 21 -1 14 2 9 C1 13 3 17 7 19 C4 14 6 8 10 2 Z" />
+            <path transform="translate(-10,-24) scale(0.68)" fill="#ff8a3d" d="M10 2 C14 8 16 14 13 19 C17 17 19 13 18 9 C21 14 20 21 16 25 C18 24 20 21 20 21 C20 27 15 31 10 31 C5 31 0 27 0 21 C0 21 2 24 4 25 C0 21 -1 14 2 9 C1 13 3 17 7 19 C4 14 6 8 10 2 Z" />
+            <path transform="translate(-10,-19) scale(0.4)" fill="#ffd166" d="M10 2 C14 8 16 14 13 19 C17 17 19 13 18 9 C21 14 20 21 16 25 C18 24 20 21 20 21 C20 27 15 31 10 31 C5 31 0 27 0 21 C0 21 2 24 4 25 C0 21 -1 14 2 9 C1 13 3 17 7 19 C4 14 6 8 10 2 Z" />
+          </g>
+        </g>
+
+      </g>
+
+      <!-- camion -->
+      <g transform="translate(205,138)">
+        <g class="pb-truck-drive">
+          <ellipse class="pb-truck-shadow" cx="79" cy="88" rx="68" ry="7" fill="#000000" opacity="0.14" />
+          <g class="pb-truck-bounce">
+            <rect x="22" y="8" width="112" height="5" rx="2" fill="#c7cfcd" stroke="#1f2d2a" stroke-width="1.5" />
+            <g stroke="#1f2d2a" stroke-width="1.5">
+              <line x1="40" y1="8" x2="40" y2="13" />
+              <line x1="56" y1="8" x2="56" y2="13" />
+              <line x1="72" y1="8" x2="72" y2="13" />
+              <line x1="88" y1="8" x2="88" y2="13" />
+              <line x1="104" y1="8" x2="104" y2="13" />
+            </g>
+            <line x1="34" y1="13" x2="34" y2="40" stroke="#1f2d2a" stroke-width="2.5" />
+            <line x1="120" y1="13" x2="120" y2="40" stroke="#1f2d2a" stroke-width="2.5" />
+
+            <rect x="14" y="56" width="4" height="12" fill="#1f2d2a" />
+
+            <rect x="18" y="40" width="122" height="28" rx="6" fill="#e2342a" stroke="#1f2d2a" stroke-width="3" />
+            <rect x="18" y="50" width="122" height="7" fill="#ffffff" opacity="0.92" />
+            <rect x="18" y="57" width="122" height="2.4" fill="#01f3b3" />
+            <g stroke="#1f2d2a" stroke-width="1.2" opacity="0.45">
+              <line x1="55" y1="40" x2="55" y2="66" />
+              <line x1="92" y1="40" x2="92" y2="66" />
+            </g>
+            <rect x="60" y="50" width="9" height="3" rx="1.2" fill="#1f2d2a" />
+
+            <rect x="100" y="14" width="48" height="56" rx="10" fill="#e2342a" stroke="#1f2d2a" stroke-width="3" />
+            <rect x="108" y="22" width="32" height="22" rx="5" fill="#cfe9f2" stroke="#1f2d2a" stroke-width="2" />
+            <line x1="124" y1="22" x2="124" y2="44" stroke="#1f2d2a" stroke-width="1.3" opacity="0.5" />
+
+            <rect x="104" y="5" width="24" height="8" rx="3" fill="#1f2d2a" />
+            <rect class="pb-light-a" x="106" y="6.5" width="9" height="5" rx="2" fill="#01f3b3" />
+            <rect class="pb-light-b" x="117" y="6.5" width="9" height="5" rx="2" fill="#ffffff" />
+
+            <rect x="146" y="50" width="10" height="18" rx="3" fill="#1f2d2a" />
+            <circle cx="151" cy="55" r="4" fill="#ffe9a8" stroke="#1f2d2a" stroke-width="1.3" />
+
+            <g class="pb-wheel">
+              <circle cx="46" cy="70" r="16" fill="#23292b" stroke="#111617" stroke-width="2" />
+              <circle cx="46" cy="70" r="6" fill="#cfd3d2" />
+              <line x1="46" y1="60" x2="46" y2="80" stroke="#8d9391" stroke-width="2" />
+              <line x1="36" y1="70" x2="56" y2="70" stroke="#8d9391" stroke-width="2" />
+            </g>
+            <g class="pb-wheel">
+              <circle cx="112" cy="70" r="16" fill="#23292b" stroke="#111617" stroke-width="2" />
+              <circle cx="112" cy="70" r="6" fill="#cfd3d2" />
+              <line x1="112" y1="60" x2="112" y2="80" stroke="#8d9391" stroke-width="2" />
+              <line x1="102" y1="70" x2="122" y2="70" stroke="#8d9391" stroke-width="2" />
+            </g>
+
+            <circle class="pb-puff pb-puff-1" cx="12" cy="54" r="3" fill="#c7cfcd" />
+            <circle class="pb-puff pb-puff-2" cx="12" cy="54" r="3" fill="#c7cfcd" />
+            <circle class="pb-puff pb-puff-3" cx="12" cy="54" r="3" fill="#c7cfcd" />
+          </g>
+        </g>
+      </g>
+      </g>
+    </svg>
+    </div>
+
+    <div class="pb-anim__stats">
+      <div class="pb-anim__stat">
+        <span class="pb-anim__value" data-target="11.29" data-decimals="2" data-suffix=" km">0 km</span>
+        <span class="pb-anim__statlabel">Distancia media</span>
+      </div>
+      <div class="pb-anim__divider"></div>
+      <div class="pb-anim__stat">
+        <span class="pb-anim__value" data-target="10.6" data-decimals="1" data-suffix=" min">0 min</span>
+        <span class="pb-anim__statlabel">Tiempo medio de llegada</span>
+      </div>
+    </div>
+
+    <p class="pb-anim__footnote">Media sobre 12,46 millones de edificios analizados en toda Espana</p>
+  </div>
+</div>
+
+<style>
+  .pb-anim {
+    --pb-accent: #01f3b3;
+    --pb-ink: #1f2d2a;
+    --pb-muted: #6b7a75;
+    box-sizing: border-box;
+    max-width: 560px;
+    margin: 0 auto;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+  .pb-anim * { box-sizing: border-box; }
+
+  .pb-anim__card {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    flex-direction: column;
+    border-radius: 18px;
+    padding: 26px 28px 22px;
+    background: #ffffff;
+    border: none;
+    box-shadow: none;
+    color: var(--pb-ink);
+  }
+
+  .pb-anim__eyebrow {
+    margin: 0 0 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--pb-muted);
+  }
+  .pb-anim__rule {
+    width: 22px;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--pb-accent);
+    display: inline-block;
+  }
+
+  .pb-anim__scenebox {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .pb-anim__scene {
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: visible;
+  }
+
+  .pb-roadline {
+    animation: pbDash 1s linear infinite;
+  }
+
+  .pb-beacon {
+    animation: pbBlink 1s ease-in-out infinite;
+  }
+
+  .pb-flag {
+    animation: pbFlag 2.2s ease-in-out infinite;
+  }
+
+  .pb-sky-a { animation: pbDriftA 16s ease-in-out infinite; }
+  .pb-sky-b { animation: pbDriftB 20s ease-in-out infinite; }
+
+  .pb-fire { animation: pbFlicker 0.55s ease-in-out infinite; }
+  .pb-fire-b { animation-duration: 0.7s; animation-delay: 0.12s; }
+
+  .pb-fire-glow { animation: pbGlow 1.8s ease-in-out infinite; }
+  .pb-fire-window-glow { animation: pbGlow 1.1s ease-in-out infinite; }
+
+  .pb-smoke { opacity: 0; }
+  .pb-smoke-1 { animation: pbSmoke 3s ease-out infinite 0s; }
+  .pb-smoke-2 { animation: pbSmoke 3s ease-out infinite 1s; }
+  .pb-smoke-3 { animation: pbSmoke 3s ease-out infinite 2s; }
+
+  .pb-truck-drive {
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation: pbDrive 7s cubic-bezier(0.47, 0, 0.53, 1) infinite;
+  }
+
+  .pb-truck-bounce {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: pbBounce 0.5s ease-in-out infinite;
+  }
+
+  .pb-wheel {
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation: pbSpin 0.5s linear infinite;
+  }
+
+  .pb-light-a { animation: pbBlink 0.4s steps(1) infinite; }
+  .pb-light-b { animation: pbBlink 0.4s steps(1) infinite 0.2s; }
+
+  .pb-puff { opacity: 0; }
+  .pb-puff-1 { animation: pbPuff 1.4s ease-out infinite 0s; }
+  .pb-puff-2 { animation: pbPuff 1.4s ease-out infinite 0.45s; }
+  .pb-puff-3 { animation: pbPuff 1.4s ease-out infinite 0.9s; }
+
+  .pb-anim__stats {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    margin-top: 14px;
+    padding-top: 18px;
+    border-top: 1px solid #edf1f0;
+  }
+
+  .pb-anim__stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 130px;
+  }
+
+  .pb-anim__value {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--pb-accent);
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .pb-anim__statlabel {
+    margin-top: 5px;
+    font-size: 12.5px;
+    color: var(--pb-muted);
+    text-align: center;
+  }
+
+  .pb-anim__divider {
+    width: 1px;
+    height: 38px;
+    background: #e3e8e6;
+  }
+
+  .pb-anim__footnote {
+    margin: 16px 0 0;
+    font-size: 8.5px;
+    color: var(--pb-muted);
+    text-align: center;
+    opacity: 0.85;
+  }
+
+  @keyframes pbDash {
+    from { stroke-dashoffset: 0; }
+    to   { stroke-dashoffset: -30; }
+  }
+
+  @keyframes pbDrive {
+    0%   { transform: translateX(0px) scaleX(1); }
+    46%  { transform: translateX(397px) scaleX(1); }
+    50%  { transform: translateX(397px) scaleX(-1); }
+    96%  { transform: translateX(0px) scaleX(-1); }
+    100% { transform: translateX(0px) scaleX(1); }
+  }
+
+  @keyframes pbBounce {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-1.6px) rotate(-0.6deg); }
+  }
+
+  @keyframes pbSpin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  @keyframes pbBlink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0.15; }
+  }
+
+  @keyframes pbFlag {
+    0%, 100% { transform: skewY(0deg) rotate(0deg); }
+    50% { transform: skewY(-6deg) rotate(-3deg); }
+  }
+
+  @keyframes pbDriftA {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(14px); }
+  }
+  @keyframes pbDriftB {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(-12px); }
+  }
+
+  @keyframes pbPuff {
+    0%   { opacity: 0.45; transform: translate(0, 0) scale(0.4); }
+    100% { opacity: 0; transform: translate(-16px, -14px) scale(1.6); }
+  }
+
+  @keyframes pbFlicker {
+    0%, 100% { transform: scaleY(1) scaleX(1) rotate(0deg); }
+    50% { transform: scaleY(1.1) scaleX(0.94) rotate(-2deg); }
+  }
+
+  @keyframes pbGlow {
+    0%, 100% { opacity: 0.45; }
+    50% { opacity: 0.9; }
+  }
+
+  @keyframes pbSmoke {
+    0%   { opacity: 0.35; transform: translate(0, 0) scale(0.6); }
+    100% { opacity: 0; transform: translate(10px, -38px) scale(2.1); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pb-roadline, .pb-beacon, .pb-flag, .pb-sky-a, .pb-sky-b,
+    .pb-truck-drive, .pb-truck-bounce, .pb-wheel,
+    .pb-light-a, .pb-light-b, .pb-puff-1, .pb-puff-2, .pb-puff-3,
+    .pb-fire, .pb-fire-glow, .pb-fire-window-glow,
+    .pb-smoke-1, .pb-smoke-2, .pb-smoke-3 {
+      animation: none;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .pb-anim__value { font-size: 28px; }
+    .pb-anim__stats { gap: 20px; }
+    .pb-anim__card { padding: 20px 16px 18px; }
+  }
+</style>
+
+<script>
+  (function () {
+    // Debe coincidir con la duracion y los puntos de corte (%) del keyframe
+    // CSS "pbDrive" que mueve al camion, para que las cifras avancen al mismo
+    // ritmo exacto que el camion recorre la carretera.
+    var DRIVE_DURATION_MS = 7000;
+    var FORWARD_END = 0.46;
+    var FLIP_OUT_END = 0.50;
+    var RETURN_END = 0.96;
+
+    var reduceMotion = window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    function ease(t) {
+      return t * t * (3 - 2 * t);
+    }
+
+    function driveFraction(phase) {
+      if (phase < FORWARD_END) return ease(phase / FORWARD_END);
+      if (phase < FLIP_OUT_END) return 1;
+      if (phase < RETURN_END) return ease(1 - (phase - FLIP_OUT_END) / (RETURN_END - FLIP_OUT_END));
+      return 0;
+    }
+
+    function formatEs(value, decimals) {
+      return value.toFixed(decimals).replace(".", ",");
+    }
+
+    var startTime = performance.now();
+
+    var cards = document.querySelectorAll(".pb-anim__card");
+    cards.forEach(function (card) {
+      var values = Array.prototype.map.call(card.querySelectorAll(".pb-anim__value"), function (el) {
+        return {
+          el: el,
+          target: parseFloat(el.getAttribute("data-target")),
+          decimals: parseInt(el.getAttribute("data-decimals"), 10) || 0,
+          suffix: el.getAttribute("data-suffix") || ""
+        };
+      });
+
+      if (reduceMotion) {
+        values.forEach(function (v) {
+          v.el.textContent = formatEs(v.target, v.decimals) + v.suffix;
+        });
+        return;
+      }
+
+      var running = false;
+      var rafId = null;
+
+      function frame(now) {
+        var elapsed = now - startTime;
+        var phase = (elapsed % DRIVE_DURATION_MS) / DRIVE_DURATION_MS;
+        var fraction = driveFraction(phase);
+        values.forEach(function (v) {
+          v.el.textContent = formatEs(v.target * fraction, v.decimals) + v.suffix;
+        });
+        if (running) rafId = requestAnimationFrame(frame);
+      }
+
+      function start() {
+        if (running) return;
+        running = true;
+        rafId = requestAnimationFrame(frame);
+      }
+      function stop() {
+        running = false;
+        if (rafId) cancelAnimationFrame(rafId);
+      }
+
+      if ("IntersectionObserver" in window) {
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) start(); else stop();
+          });
+        }, { threshold: 0.3 });
+        observer.observe(card);
+      } else {
+        start();
+      }
+    });
+  })();
+</script>
+</body>
+</html>

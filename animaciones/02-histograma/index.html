@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Histograma — tiempo de llegada</title>
+</head>
+<body>
+<div class="pb-hist">
+  <div class="pb-hist__scrollzone" id="pbHistZone">
+    <div class="pb-hist__pin">
+      <div class="pb-hist__card">
+        <p class="pb-hist__eyebrow"><span class="pb-hist__rule"></span>Distribucion del tiempo de llegada</p>
+
+        <div class="pb-hist__chart" role="img"
+             aria-label="Histograma del tiempo de llegada de los bomberos a 12,46 millones de edificios, en tramos de un minuto. La media nacional es de 10,6 minutos.">
+          <div class="pb-hist__chartbody">
+            <span class="pb-hist__ylabel">Nº de edificios</span>
+            <div class="pb-hist__plotwrap">
+              <div class="pb-hist__plot">
+                <div class="pb-hist__bars" id="pbHistBars"></div>
+                <div class="pb-hist__median" id="pbHistMedian">
+                  <span class="pb-hist__medianLabel">Media 10,6 min</span>
+                </div>
+              </div>
+              <div class="pb-hist__baseline"></div>
+              <div class="pb-hist__axis" id="pbHistAxis"></div>
+              <span class="pb-hist__xlabel">Minutos hasta la llegada</span>
+            </div>
+          </div>
+        </div>
+
+        <p class="pb-hist__footnote">Media sobre 12,46 millones de edificios analizados en toda Espana</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .pb-hist {
+    --pb-accent: #01f3b3;
+    --pb-ink: #1f2d2a;
+    --pb-muted: #6b7a75;
+    --pb-bar-growing: #01f3b3;
+    --pb-bar-done: #aaaaaa;
+    box-sizing: border-box;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+  .pb-hist * { box-sizing: border-box; }
+
+  .pb-hist__scrollzone {
+    position: relative;
+    height: 360vh; /* +60vh respecto al original: más recorrido para mantener visible la barra resaltada antes de despinnear */
+  }
+
+  .pb-hist__pin {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pb-hist__card {
+    position: relative;
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 26px 28px 22px;
+    background: #ffffff;
+    color: var(--pb-ink);
+  }
+
+  .pb-hist__eyebrow {
+    margin: 0 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--pb-muted);
+  }
+  .pb-hist__rule {
+    width: 22px;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--pb-accent);
+    display: inline-block;
+  }
+
+  .pb-hist__chart {
+    width: 100%;
+  }
+
+  .pb-hist__chartbody {
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .pb-hist__ylabel {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--pb-muted);
+    white-space: nowrap;
+  }
+
+  .pb-hist__plotwrap {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .pb-hist__xlabel {
+    display: block;
+    margin-top: 6px;
+    text-align: center;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--pb-muted);
+  }
+
+  .pb-hist__plot {
+    position: relative;
+    height: clamp(220px, 56vh, 480px);
+  }
+
+  .pb-hist__bars {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    gap: 1px;
+  }
+
+  .pb-hist__bar {
+    flex: 1 1 0;
+    min-width: 1px;
+    background: var(--pb-bar-growing);
+    border: 1px solid rgba(31, 45, 42, 0.16);
+    border-radius: 1.5px 1.5px 0 0;
+    transform: scaleY(0);
+    transform-origin: bottom;
+    will-change: transform;
+    transition: background 0.4s ease, border-color 0.4s ease;
+  }
+  .pb-hist__bars.is-complete .pb-hist__bar {
+    background: var(--pb-bar-done);
+  }
+  .pb-hist__bars.is-complete .pb-hist__bar--median {
+    background: var(--pb-accent);
+  }
+
+  .pb-hist__median {
+    position: absolute;
+    bottom: 0;
+    width: 0;
+    border-left: 1.5px dashed #9fb0ab;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .pb-hist__medianLabel {
+    position: absolute;
+    bottom: 100%;
+    margin-bottom: 6px;
+    left: 8px;
+    white-space: nowrap;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--pb-ink);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .pb-hist__baseline {
+    height: 1px;
+    background: #ccd2d0;
+    width: 100%;
+  }
+
+  .pb-hist__axis {
+    position: relative;
+    height: 18px;
+    margin-top: 4px;
+  }
+  .pb-hist__tick {
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
+    font-size: 10px;
+    color: var(--pb-muted);
+    white-space: nowrap;
+  }
+
+  .pb-hist__footnote {
+    margin: 18px 0 0;
+    font-size: 8.5px;
+    color: var(--pb-muted);
+    text-align: center;
+    opacity: 0.85;
+  }
+
+  @media (max-width: 480px) {
+    .pb-hist__card { padding: 20px 16px 18px; }
+    .pb-hist__plot { height: clamp(170px, 46vh, 320px); }
+    .pb-hist__chartbody { gap: 6px; }
+    .pb-hist__ylabel { font-size: 9px; }
+    .pb-hist__xlabel { font-size: 9px; }
+  }
+</style>
+
+<script>
+  (function () {
+    // [tramo, numero de edificios] en tramos de 1 minuto; el ultimo agrupa todo >= 60 min.
+    var DATA = [
+      ["0–1", 277194], ["1–2", 785160], ["2–3", 942469], ["3–4", 921462],
+      ["4–5", 838827], ["5–6", 761617], ["6–7", 727863], ["7–8", 675000],
+      ["8–9", 643116], ["9–10", 589432], ["10–11", 548730], ["11–12", 530048],
+      ["12–13", 454969], ["13–14", 409792], ["14–15", 388930], ["15–16", 330558],
+      ["16–17", 295202], ["17–18", 261268], ["18–19", 241484], ["19–20", 214707],
+      ["20–21", 195150], ["21–22", 175527], ["22–23", 159367], ["23–24", 143642],
+      ["24–25", 129606], ["25–26", 112306], ["26–27", 96686], ["27–28", 89810],
+      ["28–29", 69026], ["29–30", 61837], ["30–31", 58231], ["31–32", 46833],
+      ["32–33", 43313], ["33–34", 29497], ["34–35", 26625], ["35–36", 26322],
+      ["36–37", 21777], ["37–38", 19103], ["38–39", 17572], ["39–40", 14089],
+      ["40–41", 13224], ["41–42", 10188], ["42–43", 8084], ["43–44", 7455],
+      ["44–45", 4533], ["45–46", 6096], ["46–47", 4389], ["47–48", 5114],
+      ["48–49", 4790], ["49–50", 3037], ["50–51", 2269], ["51–52", 1915],
+      ["52–53", 1181], ["53–54", 1721], ["54–55", 1664], ["55–56", 2205],
+      ["56–57", 1297], ["57–58", 1198], ["58–59", 853], ["60+", 5237]
+    ];
+    var MEDIAN_INDEX = 10; // tramo "10-11", donde cae la media nacional de 10,6 min
+    var REVEAL_WINDOW = 7; // nº de barras que tardan en "ponerse al dia" con el barrido
+    // El barrido de crecimiento ocupa solo una fraccion del scroll disponible; el resto
+    // (el nuevo margen de 60vh anadido a .pb-hist__scrollzone) se queda "en espera" con
+    // las barras ya completas y la barra de la mediana resaltada, para que de tiempo a verla
+    // antes de que la seccion se despinnee.
+    var SWEEP_END_PROGRESS = 200 / 260;
+
+    var n = DATA.length;
+    var maxValue = Math.max.apply(null, DATA.map(function (d) { return d[1]; }));
+
+    var barsEl = document.getElementById("pbHistBars");
+    var axisEl = document.getElementById("pbHistAxis");
+    var medianEl = document.getElementById("pbHistMedian");
+    var medianLabelEl = medianEl.querySelector(".pb-hist__medianLabel");
+    var zoneEl = document.getElementById("pbHistZone");
+    var pinEl = document.querySelector(".pb-hist__pin");
+
+    var bars = DATA.map(function (d, i) {
+      var bar = document.createElement("div");
+      bar.className = "pb-hist__bar" + (i === MEDIAN_INDEX ? " pb-hist__bar--median" : "");
+      bar.style.height = (d[1] / maxValue * 100) + "%";
+      barsEl.appendChild(bar);
+      return bar;
+    });
+
+    [0, 10, 20, 30, 40, 50, n - 1].forEach(function (i) {
+      var tick = document.createElement("span");
+      tick.className = "pb-hist__tick";
+      tick.style.left = ((i + 0.5) / n * 100) + "%";
+      tick.textContent = DATA[i][0].split("–")[0];
+      axisEl.appendChild(tick);
+    });
+    medianEl.style.left = ((MEDIAN_INDEX + 0.5) / n * 100) + "%";
+    medianEl.style.height = (DATA[MEDIAN_INDEX][1] / maxValue * 100) + "%";
+
+    var reduceMotion = window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    function ease(t) {
+      return t * t * (3 - 2 * t);
+    }
+
+    function render(progress) {
+      var growthProgress = Math.min(progress / SWEEP_END_PROGRESS, 1);
+      var sweep = growthProgress * (n + REVEAL_WINDOW);
+      var lastLocal = 0;
+      bars.forEach(function (bar, i) {
+        var local = Math.min(Math.max((sweep - i) / REVEAL_WINDOW, 0), 1);
+        bar.style.transform = "scaleY(" + ease(local) + ")";
+        if (i === n - 1) lastLocal = local;
+      });
+      var medianLocal = (sweep - MEDIAN_INDEX) / REVEAL_WINDOW;
+      medianEl.style.opacity = ease(Math.min(Math.max(medianLocal, 0), 1));
+      var isComplete = lastLocal >= 1;
+      barsEl.classList.toggle("is-complete", isComplete);
+      // El texto de la mediana solo aparece cuando el resto de barras ya se puso en gris,
+      // para que coincida con el momento en que se resalta la barra de la mediana.
+      medianLabelEl.style.opacity = isComplete ? 1 : 0;
+    }
+
+    if (reduceMotion) {
+      zoneEl.style.height = "auto";
+      pinEl.style.position = "static";
+      pinEl.style.height = "auto";
+      render(1);
+      return;
+    }
+
+    var ticking = false;
+    function computeProgress() {
+      var rect = zoneEl.getBoundingClientRect();
+      var scrollable = zoneEl.offsetHeight - window.innerHeight;
+      if (scrollable <= 0) return 1;
+      var p = -rect.top / scrollable;
+      return Math.min(Math.max(p, 0), 1);
+    }
+
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function () {
+        render(computeProgress());
+        ticking = false;
+      });
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    onScroll();
+  })();
+</script>
+</body>
+</html>
