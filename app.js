@@ -115,6 +115,31 @@ const map = new maplibregl.Map({
 let popup = null;
 let mostrarParques = false;
 
+/* ── Pantalla de carga ──
+   Oculta en el primer 'idle' tras añadir todas las fuentes/capas (ver map.on('load')
+   más abajo) — 'idle' espera a que las teselas de la vista inicial terminen de llegar,
+   a diferencia de 'load' (que solo espera al estilo vacío inicial). Timeout de
+   seguridad por si 'idle' no llegara a disparar nunca (p.ej. un fallo de red parcial
+   que deje al mapa reintentando tesela sin fin): mejor revelar un mapa posiblemente
+   incompleto que bloquear la pantalla para siempre. */
+const loadingOverlayEl = document.getElementById('loading-overlay');
+const loadingTextEl = document.getElementById('loading-text');
+const LOADING_TIMEOUT_MS = 15000;
+let loadingOcultado = false;
+
+function ocultarPantallaCarga() {
+  if (loadingOcultado) return;
+  loadingOcultado = true;
+  loadingOverlayEl.classList.add('is-hidden');
+}
+
+function mostrarErrorCarga() {
+  loadingOverlayEl.classList.add('is-error');
+  loadingTextEl.textContent = 'Error cargando los datos del mapa. Recarga la página.';
+}
+
+setTimeout(ocultarPantallaCarga, LOADING_TIMEOUT_MS);
+
 /* ── Leyenda ──
    Las 5 clases + etiquetas vienen de TIEMPO_CLASES (mismos cortes por cuantiles que
    qgis/style-benchmarks-bomberos.qml), no de un degradado continuo: así la leyenda
@@ -461,8 +486,11 @@ map.on('load', async () => { try {
   renderLeyenda();
   actualizarCapaParques();
 
+  map.once('idle', ocultarPantallaCarga);
+
 } catch (err) {
   console.error('Error inicializando el mapa:', err);
+  mostrarErrorCarga();
 }});
 
 /* ── Layout responsivo: alto real de la cabecera ──
